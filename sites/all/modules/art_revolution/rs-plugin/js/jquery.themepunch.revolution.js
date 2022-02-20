@@ -4130,6 +4130,7 @@
                 if (offsetx<0) offsetx=0;
 
 
+                
                 // START OF VIDEO OPTIONS
 
                 if (nextcaption.find('video').length > 0) {
