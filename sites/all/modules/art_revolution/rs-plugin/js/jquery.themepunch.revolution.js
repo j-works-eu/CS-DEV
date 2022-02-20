@@ -4141,8 +4141,7 @@
 
 
 
-                    // START OF VIDEO JS
-
+                    // START OF VIDEO HTML5 PLAYER SETTINGS / OPTIONS
 
                     if (nextcaption.find('video').length>0) {
 
@@ -4172,17 +4171,6 @@
 
                                 jvideo.addClass("HasListener")
 
-                                // video.addEventListener("play",function() {
-                                //     html5vid.addClass("videoisplaying");
-                                //     html5vid.find('.tp-poster').remove();
-                                //     if (nextcaption.data('volume')=="mute")
-                                //         video.muted=true;
-                                //     opt.container.trigger('revolution.slide.onvideoplay');
-                                //     opt.videoplaying=true;
-                                //     opt.container.trigger('stoptimer');
-                                //
-                                // });
-
                                 video.addEventListener("play",function() {
                                     html5vid.addClass("videoisplaying").addClass("fadeIN").removeClass("OpacHidden");
                                     html5vid.find('.tp-poster').remove();
@@ -4202,7 +4190,6 @@
                                     }
                                 });
 
-
                                 video.addEventListener("pause",function() {
                                     html5vid.removeClass("videoisplaying").removeClass("fadeIN").addClass("OpacHidden");
                                     opt.currentTime = 0;
@@ -4219,31 +4206,6 @@
                                         opt.container.revnext();
                                 });
                             }
-
-
-                            // if (jvideo.attr('poster')!=undefined && html5vid.find('.tp-poster').length==0)
-                            //   html5vid.append('<div class="tp-poster" style="position:absolute;z-index:1;width:100%;height:100%;top:0px;left:0px;background:url('+jvideo.attr('poster')+'); background-position:center center;background-size:100%;background-repeat:no-repeat;"></div>');
-
-                            // if (jvideo.attr('control') == undefined && html5vid.find('.tp-video-play-button').length==0) {
-                            //   html5vid.append('<div class="tp-video-play-button"><i class="revicon-right-dir"></i><div class="tp-revstop"></div></div>');
-                            //   html5vid.find('.tp-video-play-button').click(function() {
-                            //     if (html5vid.hasClass("videoisplaying"))
-                            //       video.pause();
-                            //     else
-                            //       video.play();
-                            //   })
-                            // }
-
-                            // if (jvideo.attr('control') == undefined) {
-                            //   html5vid.find('video, .tp-poster').click(function() {
-                            //     if (html5vid.hasClass("videoisplaying"))
-                            //       video.pause();
-                            //     else
-                            //       video.play();
-                            //   })
-                            // }
-
-
 
                             if (nextcaption.data('forcecover')==1)  {
                                 updateHTML5Size(html5vid,opt.container);
@@ -4330,7 +4292,9 @@
                             }));
 
                         });
-                    } // END OF VIDEO JS FUNCTIONS
+                    }
+
+                    // END OF VIDEO JS FUNCTIONS
 
 
                     // IF AUTOPLAY IS ON, WE NEED SOME STOP FUNCTION ON
