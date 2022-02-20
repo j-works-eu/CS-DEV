@@ -1,0 +1,17 @@
+name = Site Alert Defensie DHC
+description = Full screen Alert system - activated by Big Boss
+package = Defensie
+core = 7.x
+version = 7.x-0.1
+
+stylesheets[all][] = css/site-alert.css
+
+Change in file
+
+<!--Defensie Gilze-->
+<!----- Site Alert Defensie DHC-->
+<!----  site_alert_defensie_dhc-->
+<!----  Change module name and file (.info/.install.js.module)-->
+<!----  Add enable block to menu-->
+
+

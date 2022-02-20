@@ -1,0 +1,11 @@
+name = Stream editor
+description = "J-works Stream Editor"
+dependencies[] = jquery_update
+dependencies[] = libraries
+dependencies[] = media
+package = J-works
+core = 7.x
+version = "7.x-1.0"
+core = "7.x"
+project = "J-works Revolution Slider"
+datestamp = "1408043349"

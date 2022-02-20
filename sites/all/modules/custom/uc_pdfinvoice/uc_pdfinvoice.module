@@ -1,0 +1,118 @@
+<?php
+function uc_pdfinvoice_menu() {
+  $items = array();
+
+  $items['admin/homemade/pdfinvoice'] = array(
+	'title' => 'Pdf invoice',
+	'description' => 'Choose and configure available pdf invoice settings.',
+	'page callback' => 'drupal_get_form',
+	'page arguments' => array('uc_pdfinvoice_admin_settings'),
+	'access arguments' => array('administer pdf invoice settings'),
+	'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function uc_pdfinvoice_admin_settings($form) {
+  /**
+   * Admin menu toevoeging
+   */
+
+
+  $form['uc_pdf_filename'] = array(
+	'#type' => 'textfield',
+	'#title' => t('the file name for the attachment'),
+	'#description' => t('Give your attachment a name'),
+	'#default_value' => variable_get('uc_pdf_filename', t('invoice')),
+  );
+  
+  $form['uc_pdf_mail_body'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Body mail to customers'),
+		'#description' => t("Here you can put the body text you want your customers to see"),
+		'#default_value' => variable_get('uc_pdf_mail_body', t("Bedankt voor uw betaling.<br />De factuur is als bijlage aan deze mail toegevoegd.<br /><br />Met vriendelijk groet,<br/>Team Cloud Screen")),
+	);
+  
+
+  return system_settings_form($form);
+}
+
+
+/**
+ * Implements hook_mail_alter()
+ */
+
+
+function uc_pdfinvoice_mail_alter(&$message, $form)
+{
+	if (strpos($message['id'], 'uc_order_action-mail') !== FALSE) {
+		$path = 'sites/all/libraries';
+		if (!file_exists("$path/tcpdf/tcpdf.php")) {
+//TCPDF is not installed
+			watchdog('uc_pdfinvoice', 'TCPDF is not installed at %path. Cannot generate PDF. Notify your administrator.',
+				array('%path' => $path . '/tcpdf'));
+			return;
+		}
+		require_once("$path/tcpdf/config/lang/eng.php");
+		require_once("$path/tcpdf/tcpdf.php");
+//create a PDF
+		
+		$oid = db_query('SELECT * FROM {uc_orders} ORDER BY created DESC LIMIT 1')->fetchAll(PDO::FETCH_ASSOC);
+		
+		
+		foreach ($oid as $result) {
+			$uc_order_id =  $result['order_id'];
+			$uc_uid =  $result['uid'];
+			
+			$user_fields = user_load($uc_uid);
+			$klantnaam = $user_fields->field_klantnaam['und']['0']['value'];
+			
+			$title_order = variable_get('uc_pdf_filename', 'Factuur');
+			$today = date("d-m-Y");
+			
+			$fileName = $title_order . '-' . $uc_order_id . ".pdf";
+			
+			$body = $message['body'];
+			$invoice = implode("", $body);
+			$pdf = new TCPDF();
+// set document information
+			$pdf->SetCreator(PDF_CREATOR);
+			$pdf->SetAuthor('System generated');
+			$pdf->setPrintHeader(FALSE);
+			$pdf->setPrintFooter(FALSE);
+			$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+			$pdf->AddPage();
+			$pdf->writeHTML($invoice, TRUE, 0, TRUE, 0);
+
+//write the file to de pdf folder
+			$uri = 'public://';
+			$stream = file_stream_wrapper_get_instance_by_uri($uri);
+			$path = DRUPAL_ROOT . '/' . $stream->getDirectoryPath() . '/' . file_uri_target($uri);
+			$filename = $fileName;
+			$full_path = $path . '/' . $filename;
+			$pdf->Output($full_path, 'F');
+
+//Inserting File data into database
+
+
+//send as attachment
+			$hash = md5("uc_pdfinvoice");
+			$message['headers']["Content-Type"] = "multipart/mixed; charset=utf-8; boundary=\"" . $hash . "\"";
+			$message['headers']["X-Mailer"] = 'Drupal EPF (PHP/' . phpversion() . ')';
+			$completedstart = "$title_order id: <b>$title_order-$uc_order_id</b><br /><br />Beste $klantnaam <br /><br />";
+			$completedbody = variable_get('uc_pdf_mail_body', t("Bedankt voor uw betaling.<br />De factuur is als bijlage aan deze mail toegevoegd.<br /><br />Met vriendelijk groet,<br/>Team Cloud Screen"));
+			$data = '';
+			$data .= "--" . $hash . "\n" .
+				$message['body'][] = "--" . $hash . "\n"
+					. 'Content-Type: text/html; charset=utf-8\n' . PHP_EOL . PHP_EOL
+					. $completedstart . PHP_EOL . PHP_EOL
+					. $completedbody . PHP_EOL . PHP_EOL;
+			$message['body'][] = "--" . $hash . "\n"
+				. 'Content-Type: ' . file_get_mimetype($filename) . ";" . "name=$fileName" . "\n"
+				. "Content-Disposition: attachment; filename=$fileName" . "\n"
+				. "Content-Transfer-Encoding: base64\n\n"
+				. chunk_split(base64_encode(file_get_contents($full_path))) . "\n";
+		}
+	}
+}

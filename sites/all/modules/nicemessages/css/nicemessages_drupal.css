@@ -1,0 +1,58 @@
+#jGrowl .jGrowl-notification {
+    font-family: 'Inconsolata', monospace !important;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    background-position: 4px center;
+    background-repeat: no-repeat;
+    padding-right: 22px;
+    width: 100%;
+}
+
+#jGrowl .jGrowl-notification.status {
+    color: #ffffff;
+    background-color: rgb(0 147 0 / 75%);
+}
+
+#jGrowl .jGrowl-notification.warning {
+    color: #ffffff;
+    background-color: rgb(255 94 0 / 75%);
+}
+
+#jGrowl .jGrowl-notification.error {
+    color: #ffffff;
+    background-color: rgb(255 0 0 / 75%);
+}
+
+#jGrowl .jGrowl-notification a {
+    color: #fff;
+    border-bottom: 1px dotted white;
+}
+
+#jGrowl .jGrowl-notification .jGrowl-message {
+    word-wrap: break-word;
+    text-align: center;
+}
+
+#jGrowl .jGrowl-notification .jGrowl-close {
+    font-size: 4em;
+    position: absolute;
+    right: -58px;
+    top: -12px;
+    color: #fd5152;
+}
+
+#jGrowl .jGrowl-closer {
+    padding-right: 24px;
+    padding-left: 24px;
+    background-image: none;
+    display: none;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: 0 none;
+    background-image: none;
+}
+.jGrowl.bottom-right {
+     right: unset !important;
+     bottom: unset !important;
+}

@@ -1,0 +1,1430 @@
+<?php /** @noinspection PhpDuplicateSwitchCaseBodyInspection */
+
+module_load_include('inc', 'art_revolution', 'inc/slide');
+/* Implement hook_menu */
+
+function art_revolution_menu()
+{
+    $items = array();
+    $items['admin/art_revolution'] = array(
+        'title' => 'Cloud Screen Editor',
+        'page callback' => 'art_revolution_list',
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_NORMAL_ITEM
+    );
+
+    // Themes ---------------------------------------------------------
+
+
+    $items['admin/art_revolution/add'] = array(
+        'title' => t('Add new Stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_LOCAL_ACTION,
+        'file' => 'modify.art_revolution.php'
+    );
+    $items['admin/art_revolution/%/edit'] = array(
+        'title' => t('Change Stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'modify.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/klantedit'] = array(
+        'title' => t('Stream settings'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_CALLBACK,
+        'file' => 'klantmodify.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/frp'] = array(
+        'title' => t('Restart your Stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_CALLBACK,
+        'file' => 'refresh.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/logout'] = array(
+        'title' => t('Force a Logout of the stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'logout.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/klant'] = array(
+        'title' => t('Customer settings'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'setting.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/data'] = array(
+        'title' => t('Copy stream data'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_CALLBACK,
+        'file' => 'data.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/settings'] = array(
+        'title' => 'Stream settings',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'settings.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/resetpass'] = array(
+        'title' => t('Reset customer password'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'password.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/locked'] = array(
+        'title' => t('Lock customer'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'locked.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/unlocked'] = array(
+        'title' => t('Unlock Cusomer'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+        'file' => 'unlocked.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/disable'] = array(
+        'title' => t('Disable stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_form', 2),
+        'access arguments' => 'art_revolution_check_user_has_role',
+        'type' => MENU_CALLBACK,
+        'file' => 'disable.art_revolution.php'
+    );
+
+    $items['admin/art_revolution/%/editslides'] = array(
+        'title' => t('Edit Stream'),
+        'page callback' => 'art_revolution_edit_sliders',
+        'page arguments' => array(2),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_LOCAL_ACTION,
+        'context' => MENU_CONTEXT_INLINE
+    );
+    $items['admin/art_revolution/%/globalsettings'] = array(
+        'title' => t('Stream global Settings'),
+        'page callback' => 'art_revolution_global_settings',
+        'page arguments' => array(2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_LOCAL_ACTION,
+        'context' => MENU_CONTEXT_INLINE
+    );
+    $items['admin/art_revolution/%/delete'] = array(
+        'title' => t('Delete Stream'),
+        'page callback' => 'art_revolution_delete',
+        'page arguments' => array(2),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['admin/art_revolution/%/export'] = array(
+        'title' => t('Export Stream'),
+        'page callback' => 'art_revolution_export',
+        'page arguments' => array(2),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_LOCAL_ACTION,
+        'context' => MENU_CONTEXT_INLINE,
+        'file' => 'inc/export.inc',
+    );
+    $items['admin/art_revolution/%/import'] = array(
+        'title' => t('Import Stream'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_import_form'),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_LOCAL_ACTION,
+        'file' => 'inc/import.inc',
+    );
+    $items['admin/art_revolution/%/import_slide'] = array(
+        'title' => t('Import slide'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_import_slide_form'),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_LOCAL_ACTION,
+        'file' => 'inc/import_slide.inc',
+    );
+
+    $items['admin/art_revolution/%/themes'] = array(
+        'title' => t("Ready-Made Templates"),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_import_theme_form'),
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_LOCAL_ACTION,
+        'file' => 'inc/themes.inc',
+    );
+
+    $items['admin/art_revolution/save'] = array(
+        'title' => t('Save'),
+        'page callback' => 'art_revolution_save',
+        'access arguments' => array('admin_art_revolution_klant'),
+        'type' => MENU_CALLBACK
+    );
+
+//  $items['admin/art_revolution/preview'] = array(
+//    'title' => 'Voorbeeld van de Stream',
+//    'page callback' => 'art_revolution_preview',
+//    'access arguments' => array('admin_art_revolution'),
+//    'type' => MENU_CALLBACK
+//  );
+
+    $items['admin/art_revolution/settings'] = array(
+        'title' => t('Settings'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('art_revolution_settings_form'),
+        'access arguments' => array('admin_art_revolution'),
+        'type' => MENU_NORMAL_ITEM
+    );
+
+    // To use local task menu items, there must be a parent page.
+//  $items['contextual'] = array(
+//    'title' => 'The contextual example page',
+//    'page callback' => 'contextual_example_page',
+//    'page arguments' => array(
+//      1
+//    ),
+//    'access callback' => TRUE
+//  );
+
+
+    return $items;
+}
+
+
+/**
+ * Implements hook_permission()
+ */
+function art_revolution_permission()
+{
+    return array(
+        'admin_art_revolution' => array(
+            'title' => t('Administer J-works Streams'),
+        ),
+        'admin_art_revolution_klant' => array(
+            'title' => t('Edit en save J-works Streams'),
+        ),
+    );
+}
+
+function art_revolution_settings_form()
+{
+    $form['art_revolution_block_num'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Number of blocks',
+        '#default_value' => variable_get('art_revolution_block_num', 1)
+    );
+    return system_settings_form($form);
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function art_revolution_block_info()
+{
+    $blocks = array();
+    $num = variable_get('art_revolution_block_num', 1);
+    for ($i = 1; $i <= $num; $i++) {
+        $blocks['art_revolution_block_' . $i] = array(
+            'info' => t('Revolution Slider Block ' . $i),
+            'cache' => DRUPAL_NO_CACHE
+        );
+    }
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function art_revolution_block_configure($delta = '')
+{
+    $form = array();
+
+    if (str_replace('art_revolution_block_', '', $delta) != $delta) {
+        $results = db_select('{art_revolution}', 'd')->fields('d', array(
+            'id',
+            'name'
+        ))->execute();
+        $options = array();
+        foreach ($results as $row) {
+            $options[$row->id] = $row->name;
+        }
+        $num = str_replace('art_revolution_block_', '', $delta);
+        $form['slide'] = array(
+            '#type' => 'select',
+            '#title' => t('Slideshow'),
+            '#options' => $options,
+            '#default_value' => variable_get('art_revolution_block_slide_' . $num),
+            '#description' => t('Select slideshow.')
+        );
+    }
+    return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function art_revolution_block_save($delta = '', $edit = array())
+{
+    if (str_replace('art_revolution_block_', '', $delta) != $delta) {
+        $num = str_replace('art_revolution_block_', '', $delta);
+        variable_set('art_revolution_block_slide_' . $num, $edit['slide']);
+    }
+}
+
+function art_revolution_block_view_alter(&$data, $block)
+{
+    if (str_replace('art_revolution_block_', '', $block->delta) != $block->delta) {
+        $num = str_replace('art_revolution_block_', '', $block->delta);
+        $sid = variable_get('art_revolution_block_slide_' . $num);
+        $contextual_links = array('admin/art_revolution', array($sid));
+        $data['content']['#contextual_links']['art_revolution_edit'] = $contextual_links;
+    }
+}
+
+function art_revolution_block_view($delta = '')
+{
+    $block = array();
+    if (str_replace('art_revolution_block_', '', $delta) != $delta) {
+        $num = str_replace('art_revolution_block_', '', $delta);
+        $slide = variable_get('art_revolution_block_slide_' . $num);
+        $block['content'] = menu_tree($delta);
+        $block['content']['#markup'] = art_revolution_block_content($slide);
+        $block['content']['#contextual_links']['menu'] = array('admin/structure/menu/manage', array($delta));
+    }
+    return $block;
+}
+
+function art_revolution_block_content($sid)
+{
+    $slideshow = art_revolution_load($sid);
+    if (!$slideshow)
+        return 'No slider selected';
+    $module_path = drupal_get_path('module', 'art_revolution');
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.plugins.min.js');
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.revolution.js');
+    drupal_add_css($module_path . '/rs-plugin/css/settings.css');
+    drupal_add_css($module_path . '/css/revolution.css');
+    drupal_add_css($module_path . '/rs-plugin/css/settings.css');
+    return theme('art_revolution_slides', array(
+        'id' => $sid,
+        'slides' => $slideshow->slides,
+        'settings' => $slideshow->settings
+    ));
+}
+
+function art_revolution_list()
+{
+    $header = array('ID', 'Name', 'Edit Slider', 'Global Settings', 'Export', 'Import', 'Delete');
+    $results = db_select('{art_revolution}', 'd')
+        ->fields('d', array('id', 'name'))
+        ->execute();
+    $rows = array();
+    foreach ($results as $row) {
+        $row->name = l($row->name, 'admin/art_revolution/' . $row->id . '/edit');
+        $row->edit = l('Remote refresh', 'admin/art_revolution/' . $row->id . '/frp');
+        $row->edit = l('Reclame aanpassen', 'admin/art_revolution/' . $row->id . '/instellingen');
+        $row->edit = l('Edit Slider', 'admin/art_revolution/' . $row->id . '/editslides');
+        $row->globalsettings = l('Global Settings', 'admin/art_revolution/' . $row->id . '/globalsettings');
+        $row->export = l('Export', 'admin/art_revolution/' . $row->id . '/export');
+        $row->import = l('Import', 'admin/art_revolution/' . $row->id . '/import');
+        $row->delete = l('Delete', 'admin/art_revolution/' . $row->id . '/delete');
+        $tmp = (array)$row;
+        $rows[] = $tmp;
+    }
+    return theme_table(array(
+        'header' => $header,
+        'rows' => $rows,
+        'attributes' => array(),
+        'caption' => '',
+        'colgroups' => array(),
+        'sticky' => false,
+        'empty' => t('No slider created yet.')
+    ));
+}
+
+function art_revolution_edit_sliders($id)
+{
+    require_once 'value.php';
+    include 'rs-plugin/css/extra_styles.php';
+    drupal_add_library('media', 'media_browser');
+    drupal_add_library('media', 'media_browser_settings');
+    drupal_add_js('https://apps.elfsight.com/p/platform.js', array('type' => 'external', 'defer' => 'defer'));
+    $module_path = drupal_get_path('module', 'art_revolution');
+    drupal_add_library('system', 'ui.draggable');
+    drupal_add_library('system', 'ui.dropable');
+    drupal_add_library('system', 'ui.sortable');
+    drupal_add_library('system', 'ui.dialog');
+    drupal_add_library('system', 'ui.tabs');
+    drupal_add_css($module_path . '/css/admin.style.css');
+    drupal_add_css($module_path . '/css/jquery.ui.rotatable.css');
+    drupal_add_css($module_path . '/css/fs.animations.css');
+    drupal_add_css($module_path . '/css/jquery.ui.ruler.css');
+    drupal_add_js('https://maps.googleapis.com/maps/api/js?key=AIzaSyB5eMIucoV9TSo-0vudUJAcAjIMEzkwqPc&callback=initMap&libraries=places&v=weekly', array('type' => 'external', 'defer' => 'defer'));
+    drupal_add_js('https://polyfill.io/v3/polyfill.min.js?features=default', array('type' => 'external', 'defer' => 'defer'));
+    drupal_add_js($module_path . '/js/art.revolution.js');
+    drupal_add_js($module_path . '/js/jquery.scrollTo.js');
+    drupal_add_js($module_path . '/js/custom.js');
+    drupal_add_js($module_path . '/js/jscolor.js');
+    drupal_add_js($module_path . '/js/jquery.ui.rotatable.js');
+    drupal_add_js($module_path . '/js/jquery.ui.rotatable.min.js');
+
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.plugins.min.js');
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.revolution.js');
+    drupal_add_css($module_path . '/rs-plugin/css/settings.css');
+    $slideshow = art_revolution_load($id);
+    $destination = isset($_GET['destination']) ? $_GET['destination'] : 'admin/art_revolution';
+    $destination = url($destination);
+    $js = 'var destination = "' . $destination . '";var $settings=' . json_encode($slideshow->settings) . ';var $slides = ' . json_encode($slideshow->slides) . '; var $layers = new Array(); var $currentSlide=0; var $currentLayer=0;';
+    drupal_add_js($js, 'inline');
+    drupal_add_js(drupal_get_path('module', 'art_revolution') . '/js/admin.artrevolution.js');
+    drupal_add_js(drupal_get_path('module', 'art_revolution') . '/js/admin.animation.js');
+    ob_start();
+    include 'layout/layersettings.php';
+    $content = ob_get_clean();
+    return $content;
+}
+
+function art_revolution_global_settings($id)
+{
+    require_once 'value.php';
+    drupal_add_library('media', 'media_browser');
+    drupal_add_library('media', 'media_browser_settings');
+    $module_path = drupal_get_path('module', 'art_revolution');
+    drupal_add_library('system', 'ui.draggable');
+    drupal_add_library('system', 'ui.dropable');
+    drupal_add_library('system', 'ui.sortable');
+    drupal_add_library('system', 'ui.dialog');
+    drupal_add_library('system', 'ui.tabs');
+    drupal_add_css($module_path . '/css/admin.style.css');
+    drupal_add_js($module_path . '/js/art.revolution.js');
+    drupal_add_js($module_path . '/js/custom.js');
+    drupal_add_js($module_path . '/js/jscolor.js');
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.plugins.min.js');
+    drupal_add_js($module_path . '/rs-plugin/js/jquery.themepunch.revolution.js');
+    drupal_add_css($module_path . '/rs-plugin/css/settings.css');
+    $slideshow = art_revolution_load($id);
+    $destination = isset($_GET['destination']) ? $_GET['destination'] : 'admin/art_revolution';
+    $destination = url($destination);
+    $js = 'var destination = "' . $destination . '";var $settings=' . json_encode($slideshow->settings) . ';var $slides = ' . json_encode($slideshow->slides) . '; var $layers = new Array(); var $currentSlide=0; var $currentLayer=0;';
+    drupal_add_js($js, 'inline');
+    drupal_add_js(drupal_get_path('module', 'art_revolution') . '/js/settings.artrevolution.js');
+    ob_start();
+    include 'layout/globalsettings.php';
+    $content = ob_get_clean();
+    return $content;
+}
+
+function art_revolution_delete($slideid)
+{
+    return drupal_get_form('art_revolution_confirm_form');
+}
+
+function art_revolution_confirm_form($form_state)
+{
+
+    $slideid = arg(2);
+    if (is_numeric($slideid)) {
+        $slide = db_select('{art_revolution}', 'd')
+            ->fields('d')
+            ->condition('id', $slideid, '=')
+            ->execute()
+            ->fetchAssoc();
+    } else {
+        $slide = array(
+            'id' => '',
+            'username' => '',
+            'name' => '',
+        );
+    }
+    $form = array();
+
+    $form['id'] = array(
+        '#type' => 'textfield',
+        '#disabled' => TRUE,
+        '#title' => 'Reclame ID',
+        '#default_value' => $slide['id']
+    );
+
+    $form['name'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Bedrijf',
+        '#disabled' => TRUE,
+        '#default_value' => $slide['name'],
+        '#required' => TRUE
+    );
+
+    $form['username'] = array(
+        '#type' => 'hidden',
+        '#default_value' => $slide['username']
+    );
+
+
+    return confirm_form($form, 'Do you really want to delete this slide?', 'admin/art_revolution', NULL, 'Delete', 'Cancel');
+}
+
+
+function art_revolution_confirm_form_submit($form, &$form_state)
+{
+
+    $username = $form['username']['#value'];
+    $user = user_load_by_name($username);
+    $user_id = $user->uid;
+
+    db_delete('users')
+        ->condition('uid', $user_id)
+        ->execute();
+
+    $slideid = $form['id']['#value'];
+
+    db_delete('art_revolution')
+        ->condition('id', $slideid)
+        ->execute();
+
+    db_delete("field_data_field_reclame_id")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_data_field_pagina_reload_snelheid")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+
+    db_delete("field_data_field_force_refresh_page")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_data_field_mail_offline")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_data_field_bedrijfsnaam")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+
+    db_delete("field_data_field_klantnaam")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_revision_field_reclame_id")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_revision_field_pagina_reload_snelheid")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+
+    db_delete("field_revision_field_force_refresh_page")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_revision_field_mail_offline")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_revision_field_bedrijfsnaam")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    db_delete("field_revision_field_klantnaam")
+        ->condition('entity_id', $user_id)
+        ->execute();
+
+    drupal_set_message('The slide and user has been deleted');
+    drupal_goto('<front>');
+}
+
+function art_revolution_save()
+{
+    header('Content-type: application/json');
+    $sid = $_REQUEST['sid'];
+    $data = $_REQUEST['data'];
+    $settings = $_REQUEST['settings'];
+    db_update('{art_revolution}')->fields(array(
+        'data' => $data,
+        'settings' => $settings
+    ))->condition('id', $sid, '=')->execute();
+    $result = array(
+        'data' => 'saved'
+    );
+    print json_encode($result);
+    exit(0);
+}
+
+function art_revolution_preview()
+{
+    $sid = 1;
+    $slides = json_decode(base64_decode($_REQUEST['data']));
+    $settings = json_decode(base64_decode($_REQUEST['settings']));
+    print theme('art_revolution_block', array(
+        'sid' => $sid,
+        'slides' => $slides,
+        'settings' => $settings
+    ));
+    exit(0);
+}
+
+/* Implements hook_theme(). */
+
+function art_revolution_theme()
+{
+    $path = drupal_get_path('module', 'art_revolution');
+    $themes['art_revolution_slides'] = array(
+        'template' => 'slides',
+        'path' => $path . '/theme',
+        'pattern' => 'revolution__',
+        'preprocess functions' => array(
+            'template_preprocess',
+            'art_revolution_preprocess_slides',
+        ),
+        'variables' => array()
+    );
+    $themes['art_revolution_slide'] = array(
+        'template' => 'slide',
+        'path' => $path . '/theme',
+        'pattern' => 'revolution__',
+        'preprocess functions' => array(
+            'template_preprocess',
+            'art_revolution_preprocess_slide',
+        ),
+        'variables' => array()
+    );
+    $themes['art_revolution_layer'] = array(
+        'template' => 'layer',
+        'path' => $path . '/theme',
+        'pattern' => 'revolution__',
+        'preprocess functions' => array(
+            'template_preprocess',
+            'art_revolution_preprocess_layer',
+        ),
+        'variables' => array()
+    );
+    return $themes;
+}
+
+function art_revolution_preprocess_slides(&$vars)
+{
+    $vars['theme_hook_suggestions'][] = 'revolution__slides';
+    if (!empty($vars)) {
+        $slides = $vars['slides'];
+        $settings = $vars['settings'];
+    }
+
+    $html_id = drupal_html_id('art_revolution');
+    $vars['id'] = $html_id;
+    $vars['attributes_array']['id'] = $html_id;
+
+    $vars['attributes_array']['class'] = 'tp-banner-container tp-simpleresponsive ';
+    if (isset($slides->startheight)) {
+        $vars['attributes_array']['style'] = "height: {$slides->startheight}px !important;";
+    }
+    $vars['content'] = '';
+    if (!empty($slides)) {
+        foreach ($slides as $slide) {
+            try {
+                $vars['content'] .= theme('art_revolution_slide', array(
+                    'slide' => $slide,
+                ));
+            } catch (Exception $e) {
+            }
+        }
+    }
+}
+
+function art_revolution_preprocess_slide(&$vars)
+{
+
+    $slide = $vars['slide'];
+    $layers = $slide->layers;
+
+    $currentDate = date('d-m-Y H:i:s', strtotime('now'));
+    $currentDateExtra = date("Y-m-d H:i:s", strtotime("now") + 3600);
+    $datefromTime = $slide->dateSTART_TijdHour . ':' . $slide->dateSTART_TijdMinutes;
+    $datefrom = date('d-m-Y H:i:s', strtotime($slide->datevan . ' ' . $datefromTime)) . ',';
+    $timestampDatefrom = array_values(array_filter(explode(" ", strtotime($datefrom))));;
+    $timestampDateFF = $timestampDatefrom . ',';
+    $timestampDatef = explode(" ", strtotime($datefrom));
+    $datetoTime = $slide->dateEND_TijdHour . ':' . $slide->dateEND_TijdMinutes;
+    $dateto = date('d-m-Y H:i:s', strtotime($slide->datenaar . ' ' . $datetoTime));
+    $timestampDateto = array_values(array_filter(explode(" ", strtotime($dateto))));
+
+
+    $getSlide = '';
+
+    if ($_GET['slide'] == '0' || !empty($_GET['slide']))  {
+        $getSlide = true;
+    }
+
+    if ($getSlide == false) {
+        if (!empty($slide->datevan) && !empty($slide->datenaar)) {
+            $currentDate = date('d-m-Y H:i');
+            $currentDate = date('d-m-Y H:i', strtotime($currentDate));
+            $datefromTime = $slide->dateSTART_TijdHour . ':' . $slide->dateSTART_TijdMinutes;
+            $datefrom = date('d-m-Y H:i:s', strtotime($slide->datevan . ' ' . $datefromTime));
+            $datetoTime = $slide->dateEND_TijdHour . ':' . $slide->dateEND_TijdMinutes;
+            $dateto = date('d-m-Y H:i:s', strtotime($slide->datenaar . ' ' . $datetoTime));
+
+            if (($currentDate > $datefrom) && ($currentDate < $dateto)) {
+                $vars['attributes_array']['class'] = 'Disable-false datebetween';
+            } else {
+                $vars['attributes_array']['class'] = 'Disable-true datebeween';
+            }
+        }
+    }
+
+
+
+    if ($slide->disableslide === 'true') {
+        $vars['attributes_array']['data-disable'] = $slide->disableslide;
+        $vars['attributes_array']['class'] = 'Disable-' . $slide->disableslide;
+    }
+
+    if (!empty($slide->data_link)) {
+        if ($slide->data_link) {
+            $vars['attributes_array']['data-link'] = $slide->data_link;
+        }
+    }
+
+    if (!empty($slide->data_target)) {
+        if ($slide->data_target) {
+            $vars['attributes_array']['data-target'] = $slide->data_target;
+        }
+    }
+    if (!empty($slide->data_slideindex)) {
+        if ($slide->data_slideindex) {
+            $vars['attributes_array']['data-slideindex'] = $slide->data_slideindex;
+        }
+    }
+    if (!empty($slide->data_transition)) {
+        if ($slide->data_transition) {
+            $vars['attributes_array']['data-transition'] = $slide->data_transition;
+        }
+    }
+    if (!empty($slide->data_masterspeed)) {
+        if ($slide->data_masterspeed) {
+            $vars['attributes_array']['data-masterspeed'] = $slide->data_masterspeed;
+        }
+    }
+    if (isset($slide->data_slotamount)) {
+        if ($slide->data_slotamount) {
+            $vars['attributes_array']['data-slotamount'] = $slide->data_slotamount;
+        }
+    }
+    if (!empty($slide->data_delay)) {
+        if ($slide->data_delay) {
+            $vars['attributes_array']['data-delay'] = $slide->data_delay;
+        }
+    }
+
+    if ($slide->backgroundcolormain) {
+        $vars['attributes_array']['style'] = 'background-color:' . $slide->backgroundcolormain . '!important;';
+    } else {
+        $vars['attributes_array']['style'] = 'background-color: #0c0c0c !important;';
+    }
+
+
+    if ($slide->background_image) {
+        $vars['content'] = "<img src=\"{$slide->background_image}\" alt=\"{$slide->title}\"/>";
+    }
+
+    $zindex = 200;
+    $zindex_elfsight = 50;
+
+    foreach ($layers as $layer) {
+
+        try {
+            $vars['content'] .= theme('art_revolution_layer', array(
+                'layer' => $layer,
+                'zindex' => $zindex--,
+                'zindex_elfsight' => $zindex_elfsight,
+            ));
+        } catch (Exception $e) {
+        }
+    }
+
+}
+
+
+function art_revolution_preprocess_layer(&$vars)
+{
+    $layer = $vars['layer'];
+
+    $vars['attributes_array']['style'] = 'z-index:' . $vars['zindex'];
+    if (empty($layer->disablelayer)) {
+        $vars['attributes_array']['class'][] = 'tp-caption';
+    } else {
+        $vars['attributes_array']['class'][] = 'tp-caption' . ' ' . 'Disable-' . $layer->disablelayer;
+    }
+
+    if (!empty($layer->incomingclasses)) {
+        if ($layer->incomingclasses) {
+            $vars['attributes_array']['class'][] = $layer->incomingclasses;
+        }
+    }
+    if (!empty($layer->outgoingclasses)) {
+        if ($layer->outgoingclasses) {
+            $vars['attributes_array']['class'][] = $layer->outgoingclasses;
+        }
+    }
+    if (!empty($layer->type)) {
+        if ($layer->type == 'video') {
+            if (!empty($layer->data_volume)) {
+                if ($layer->data_volume) {
+                    $vars['attributes_array']['data-volume'] = $layer->data_volume;
+                }
+            }
+            if (!empty($layer)) {
+                if ($layer->data_autoplay) {
+                    $vars['attributes_array']['data-autoplay'] = $layer->data_autoplay;
+                }
+            }
+            $vars['attributes_array']['style'] = 'z-index:' . $vars['zindex'] . ';';
+        }
+    }
+    if (!empty($layer->type)) {
+        if ($layer->type == 'widgets') {
+            $vars['attributes_array']['style'] = 'z-index:' . $vars['zindex_elfsight'] . ' !important';
+        }
+    }
+    if (!empty($layer->type)) {
+        if ($layer->type == 'text') {
+            $vars['attributes_array']['class'][] = $layer->text_style_text;
+            $vars['attributes_array']['style'] = 'color: ' . $layer->font_color_text . ';' . 'z-index:' . $vars['zindex'] . ';';
+        }
+    }
+    if (!empty($layer->custom_class)) {
+        $vars['attributes_array']['class'][] = $layer->custom_class;
+    }
+    if (!empty($layer->left)) {
+        if ($layer->left) {
+            $vars['attributes_array']['data-x'] = $layer->left;
+        }
+    }
+    if (!empty($layer->data_hoffset)) {
+        if ($layer->data_hoffset) {
+            $vars['attributes_array']['data-hoffset'] = $layer->data_hoffset;
+        }
+    }
+    if (!empty($layer->top)) {
+        if ($layer->top) {
+            $vars['attributes_array']['data-y'] = $layer->top;
+        }
+    }
+    if (!empty($layer->data_voffset)) {
+        if ($layer->data_voffset) {
+            $vars['attributes_array']['data-voffset'] = $layer->data_voffset;
+        }
+    }
+    if (!empty($layer->data_speed)) {
+        if ($layer->data_speed) {
+            $vars['attributes_array']['data-speed'] = $layer->data_speed;
+        }
+    }
+    if (!empty($layer->data_start)) {
+        if ($layer->data_start) {
+            $vars['attributes_array']['data-start'] = $layer->data_start;
+        }
+    }
+    if (!empty($layer->data_endspeed)) {
+        if ($layer->data_endspeed) {
+            $vars['attributes_array']['data-endspeed'] = $layer->data_endspeed;
+        }
+    }
+    if (!empty($layer->data_easing)) {
+        if ($layer->data_easing) {
+            $vars['attributes_array']['data-easing'] = $layer->data_easing;
+        }
+    }
+    if (!empty($layer->data_endeasing)) {
+        if ($layer->data_endeasing) {
+            $vars['attributes_array']['data-endeasing'] = $layer->data_endeasing;
+        }
+    }
+    if (!empty($layer->data_captionhidden)) {
+        if ($layer->data_captionhidden) {
+            $vars['attributes_array']['data-captionhidden'] = $layer->data_captionhidden;
+        }
+    }
+    if (!empty($layer->incomingclasses)) {
+        if ($layer->incomingclasses == 'customin') {
+            $vars['attributes_array']['data-customin'] = $layer->customin;
+        }
+    }
+    if (!empty($layer->outgoingclasses)) {
+        if ($layer->outgoingclasses == 'customout') {
+            $vars['attributes_array']['data-customout'] = $layer->customout;
+        }
+    }
+    if (!empty($layer->data_splitin)) {
+        if ($layer->data_splitin) {
+            $vars['attributes_array']['data-splitin'] = $layer->data_splitin;
+        }
+    }
+    if (!empty($layer->data_elementdelay)) {
+        if ($layer->data_elementdelay) {
+            $vars['attributes_array']['data-elementdelay'] = $layer->data_elementdelay;
+        }
+    }
+    if (!empty($layer->data_splitout)) {
+        if ($layer->data_splitout) {
+            $vars['attributes_array']['data-splitout'] = $layer->data_splitout;
+        }
+    }
+    if (!empty($layer->data_endelementdelay)) {
+        if ($layer->data_endelementdelay) {
+            $vars['attributes_array']['data-endelementdelay'] = $layer->data_endelementdelay;
+        }
+    }
+    if (!empty($layer->data_end)) {
+        if ($layer->data_end) {
+            $vars['attributes_array']['data-end'] = $layer->data_end;
+        }
+    }
+    if (!empty($layer->data_nextslideatend)) {
+        if ($layer->data_nextslideatend) {
+            $vars['attributes_array']['data-nextslideatend'] = $layer->data_nextslideatend;
+        }
+    }
+    if (!empty($layer->data_forcecover)) {
+        if ($layer->data_forcecover) {
+            $vars['attributes_array']['data-forcecover'] = $layer->data_forcecover;
+        }
+    }
+    if (!empty($layer->data_forcerewind)) {
+        if ($layer->data_forcerewind) {
+            $vars['attributes_array']['data-forcerewind'] = $layer->data_forcerewind;
+        }
+    }
+    if (!empty($layer->data_autoplayonlyfirsttime)) {
+        if ($layer->data_autoplayonlyfirsttime) {
+            $vars['attributes_array']['data-autoplayonlyfirsttime'] = $layer->data_autoplayonlyfirsttime;
+        }
+    }
+    if (!empty($layer->data_aspectratio)) {
+        if ($layer->data_aspectratio) {
+            $vars['attributes_array']['data-aspectratio'] = $layer->data_aspectratio;
+        }
+    }
+    if (!empty($layer->text_rotate)) {
+        if ($layer->text_rotate) {
+            $vars['attributes_array']['data-rotate'] = $layer->text_rotate;
+        }
+    }
+    if (!empty($layer->image_rotate)) {
+        if ($layer->image_rotate) {
+            $vars['attributes_array']['data-rotate'] = $layer->image_rotate;
+        }
+    }
+    if (!empty($layer->videoloop)) {
+        if ($layer->videoloop == 'loop') {
+            $vars['attributes_array']['data-videoloop'] = 'loopandnoslidestop';
+
+        }
+    }
+
+    // VARS PRE-DEF ELSE...
+    $layertransparant = $layer->layertransparant ??= 1;
+    $extraAnimation = $layer->extra_animation ??= 'noAnimation';
+    $textAlign = $layer->font_uitlijning_v1 ??= 'left';
+
+
+    switch ($layer->type) {
+
+        case 'text':
+            $vars['content'] = "<div id='textclass' style='transform: rotate({$layer->text_rotate}deg);'><p style='color:$layer->font_color_text; text-align: $textAlign !important; letter-spacing: 0 !important; font-size:$layer->font_size; opacity: $layertransparant;' class='text-live-online $extraAnimation'>" . nl2br($layer->text) . "</p></div>";
+            break;
+
+        case 'image':
+
+            if (!empty($layer->image)) {
+                $vars['content'] = "<div id='imgclass' class='$extraAnimation'><img style='opacity: $layertransparant; transform: rotate({$layer->image_rotate}deg);' alt='' width='$layer->width' height='$layer->height' src='{$layer->image}'/></div>";
+            } else {
+                $vars['content'] = "<div id='hide'></div>";
+            }
+            break;
+
+        case 'video':
+            if (!empty($layer->video)) {
+                $vars['content'] = "<div class='videoAnimation $extraAnimation'><video poster='/sites/all/modules/art_revolution/images/videoposter.jpg' width='$layer->video_width' height='$layer->video_height' muted autoplay preload='auto' $layer->videoloop id='activevideo' style='opacity: $layertransparant; transform: rotate({$layer->movie_rotate}deg);'><source src='$layer->video' type='video/mp4'></video></div>";
+
+            } else {
+                $vars['content'] = "<div id='hide'></div>";
+            }
+            break;
+
+        case 'clock':
+            if ($layer->clockoptions === 'datum') {
+                if ($layer->clockblock) {
+                    $vars['content'] = "
+											<div class='clockfull' style='opacity: $layertransparant; text-align: $layer->font_uitlijning_clock !important;'>
+											<p class='$layer->text_style_clock' style='zoom:$layer->clockzoom; color:$layer->font_color_clock;'><span class='onlyday'></span><span class='date'> | </span> <span class='onlydate'></span></p>
+											<p class='clocktime $layer->text_style_clock' style='zoom:$layer->clockzoom; color:$layer->font_color_clock;'></p>
+											</div>
+											";
+                }
+                break;
+            }
+
+
+            if ($layer->clockoptions === 'datum-a') {
+                if ($layer->clockblock) {
+                    $vars['content'] = "<p class='onlydate $layer->text_style_clock' style='opacity: $layertransparant; zoom:$layer->clockzoom; color:$layer->font_color_clock; text-align: $layer->font_uitlijning_clock; !important;'></p>";
+                }
+                break;
+            }
+
+            if ($layer->clockoptions === 'dag-a') {
+                if ($layer->clockblock) {
+                    $vars['content'] = "<p class='onlyday $layer->text_style_clock' style='opacity: $layertransparant; zoom:$layer->clockzoom; color:$layer->font_color_clock; text-align: $layer->font_uitlijning_clock; !important;'></p>";
+                }
+                break;
+            }
+
+            if ($layer->clockoptions === 'tijd-a') {
+                if ($layer->clockblock) {
+                    $vars['content'] = "<p class='clocktime $layer->text_style_clock' style='opacity: $layertransparant; zoom:$layer->clockzoom; color:$layer->font_color_clock; text-align: $layer->font_uitlijning_clock; !important;'></p>";
+                }
+                break;
+            }
+
+            break;
+
+        case 'news':
+            if ($layer->newsblock) {
+                $newsfeedID = $layer->newsblockfeed;
+                $result = db_select('aggregator_item', 'ai')
+                    ->condition('fid', $newsfeedID)
+                    ->fields('ai', array('title', 'description', 'imageurl'))
+                    ->orderBy('iid', 'DESC')
+                    ->range(0, 10)
+                    ->execute();
+
+                $vars['content'] .= "<div style='width:1920px; height:1080px;' class='nieuwsfull'> <div id='slideshow' class='sliders $layer->text_style_news'>";
+                while ($row = $result->fetchAssoc()) {
+                    $title = $row['title'];
+                    $text = strip_tags($row['description']);
+                    $text = str_replace("&rsquo;", "'", $text);
+                    $description = preg_replace("/&#?[a-z0-9]{2,8};/i", "", $text);
+                    $descriptionstrip = mb_strimwidth($description, 0, 800, "...");
+                    $imgeurl = $row['imageurl'];
+                    $vars['content'] .= "
+              <div class='slideitem current'>
+
+              <div class='newsTimebar'>
+                  <div class='in'></div>
+              </div>
+
+              <span style='color:$layer->font_color_news' class='NEWSitemInhoud'>
+    					<p style='color:$layer->font_color_news' class='newstitle'>$title</p>
+							<p style='color:$layer->font_color_news' class='newsinhoud'>$descriptionstrip</p>
+							</span>
+
+   						<p style='color:$layer->font_color_news' class='newsIMAGE'><img src='$imgeurl' alt=''/></p>
+
+						  </div>";
+                }
+                $vars['content'] .= "<div>";
+            }
+            break;
+
+        case 'widgets':
+            if ($layer->widgetpos === 'res_a') {
+                $vars['content'] = "<div style='opacity: $layertransparant; width:{$layer->slidewidth}px; height:{$layer->slideheight}px;' class='$layer->elfsightFB'></div>";
+                break;
+            }
+
+            if ($layer->widgetpos === 'res_b') {
+                $vars['content'] = "<div style='opacity: $layertransparant;' class='$layer->elfsightFB'></div>";
+                break;
+            }
+            break;
+
+        case 'iframe':
+            $vars['content'] .= "<div style='opacity: $layertransparant; '><iframe style='width:{$layer->slidewidth}px; height:{$layer->slideheight}px; overflow:hidden;' id='iframeContentMain' name='iframeContentMain' src='$layer->iframeURL' class='iframeContentMain'></iframe></div>";
+            break;
+
+        case 'animatie':
+            if ($layer->extrafanimation === '') {
+                $vars['content'] = "<div id='animatieframe' style='opacity: $layertransparant; width:{$layer->slidewidth}px; height:{$layer->slideheight}px;' class='$layer->extrafanimation'></div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-rain') {
+                $vars['content'] =
+                    "
+            <div id='animatieframe' style='opacity: $layertransparant;  width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i><i class=\"rain\"></i>
+            </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-snow') {
+                $vars['content'] =
+
+                    "<div id='animatieframe' style='opacity: $layertransparant;  width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            <div class='snow'></div>
+            </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-fireworks') {
+                $vars['content'] =
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <div class='pyro'></div>
+           </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-blocks') {
+                $vars['content'] =
+
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            <i style='background:rgba(255, 255, 255, 0.7);'></i>
+            </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-confetti') {
+                $vars['content'] =
+
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <div class=\"conf-cont\">
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+                <div class=\"confetti\"></div>
+            </div>
+        </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-stars') {
+                $vars['content'] =
+
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <div class='stars'></div>
+        </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-balloons') {
+                $vars['content'] =
+
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+            <div class='main-balloons'></div>
+        </div>";
+            }
+
+            if ($layer->extrafanimation === 'fsa-balls') {
+                $vars['content'] =
+                    "<div id='animatieframe' style='opacity: $layertransparant; width:1920px; height:1080px;' class='$layer->extrafanimation'>
+        <div id='main-baller' class='findbal'></div>
+        </div>";
+            }
+
+            break;
+
+        case 'weather':
+
+            $vars['content'] = "
+        <div class='weatherwidgetAnimated $layer->Waactive' style='width:1920px; height:1080px;'></div>
+        <div class='weatherwidgetImage $layer->Wbgactive' style='width:1920px; height:1080px;'></div>
+        <div class='weatherwidget'>
+
+          <div class='container-weer'>
+              <div class='weather'>
+               <div id='temp' class='temp'><span></span></div><div class='aimatedicon'></div>
+                <div class='weather-info'>
+                  <span id='weather-type'></span>
+                  <div class='wind'><i class='fas fa-wind'></i><span id='wind-speed'></span></div>
+                </div>
+                <div id='location' class='location'></div>
+              </div>
+           </div>
+
+          <div class='forecaster $layer->WForecast' id='forecast'>
+              <div class='forecast-days card'>
+                <div id='day1-date'></div>
+                <div id='day1-temp'></div>
+                <div class='curr-icon' id='day1-icon'></div>
+                <div id='day1-description'></div>
+              </div>
+              <div class= 'forecast-days card'>
+                <div id='day2-date'></div>
+                <div id='day2-temp'></div>
+                <div class='curr-icon' id='day2-icon'></div>
+                <div id='day2-description'></div>
+              </div>
+              <div class='forecast-days card'>
+                <div id='day3-date'></div>
+                <div id='day3-temp'></div>
+                <div class='curr-icon' id='day3-icon'></div>
+                <div id='day3-description'></div>
+              </div>
+               <div class='forecast-days card'>
+                 <div id='day4-date'></div>
+                <div id='day4-temp'></div>
+                <div class='curr-icon' id='day4-icon'></div>
+                <div id='day4-description'></div>
+              </div>
+              <div class='forecast-days card'>
+                <div id='day5-date'></div>
+                <div id='day5-temp'></div>
+                <div class='curr-icon' id='day5-icon'></div>
+                <div id='day5-description'></div>
+              </div>
+          </div>
+
+          <input id='weercity' value='$layer->weercity' type='hidden'/>
+          <input id='weercountry' value='$layer->weercountry' type='hidden'/>
+
+        </div>";
+            break;
+
+    }
+}

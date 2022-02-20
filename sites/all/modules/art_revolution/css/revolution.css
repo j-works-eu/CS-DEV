@@ -1,0 +1,18 @@
+.tp-banner-container {
+  width:100%;
+  position:relative;
+  padding:0;
+}
+
+.tp-banner{
+  width:100%;
+  position:relative;
+}
+
+.previewmode #art-revolution {
+    left: 0 !important;
+}
+
+.previewmode .tp-banner {
+
+}

@@ -1,0 +1,222 @@
+<?php
+
+/**
+ * Core functionality for the Site Alert module.
+ *
+ * @file site_alert.module
+ */
+
+define('site_alert_defensie_volkel_TIMEOUT_DEFAULT', 15);
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function site_alert_defensie_volkel_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && ($plugin_type == 'content_types')) {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function site_alert_defensie_volkel_theme() {
+  return array(
+    'site_alert' => array(
+      'variables' => array(
+        'level' => NULL,
+		'alerttitle' => NULL,
+        'alert' => NULL
+      ),
+      'template' => 'templates/site-alert',
+    ),
+    'site_alert_defensie_volkel_wrapper' => array(
+      'variables' => array(),
+      'template' => 'templates/site-alert-wrapper',
+    ),
+  );
+}
+
+/**
+ * Build the administration form.
+ *
+ * This form collects the following values
+ * and stores them in the vars table.
+ *
+ * @toggle - whether or not an alert is active
+ * @severity - Severity of the alert (low or high)
+ * @title - The title of the Alert (usually "Alert")
+ * @content - Content to display on the homepage
+ * @node - The associated Alert Node. The Read More link on the homepage will link to this node
+ */
+function site_alert_defensie_volkel_admin() {
+  $form = array();
+
+  $form['site_alert_defensie_volkel_description'] = array(
+    '#value' => '<p>' . t('Use this page to set an Alert. If the "Turn On Alert" checkbox is checked, a blue or red banner (depending on the Alert Severity) will be displayed on the homepage containing the copy defined here.') . '</p>',
+  );
+
+//  $date = time();
+//  $format = 'm-d-Y h:iA';
+
+ $form['site_alert_defensie_volkel_active'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('If checked, the screen alert is active.'),
+    '#default_value' => variable_get('site_alert_defensie_volkel_active', FALSE),
+  );
+
+  $form['site_alert_defensie_volkel_severity'] = array(
+    '#type' => 'select',
+    '#title' => 'Severity',
+    '#options' => array(
+      'info' => t('Informational - background Blue'),
+      'low' => t('Low Severity - background Orange'),
+      'high' => t('High Severity - background Red'),
+    ),
+    '#default_value' => variable_get('site_alert_defensie_volkel_severity', 'low'),
+    '#required' => TRUE,
+  );
+
+  $form['site_alert_defensie_volkel_timeout'] = array(
+    '#type' => 'hidden',
+    '#title' => t('Timeout'),
+    '#options' => array(
+	  15 => t('15 seconds'),
+    ),
+    '#default_value' => variable_get('site_alert_defensie_volkel_timeout', site_alert_defensie_volkel_TIMEOUT_DEFAULT),
+
+  );
+
+  $alert = variable_get('site_alert_defensie_volkel_content');
+  $alerttitle = variable_get('site_alert_defensie_volkel_title');
+	
+	
+	$form['site_alert_defensie_volkel_title'] = array(
+		'#title' => 'Title',
+		'#type' => 'textfield',
+		'#size' => '30',
+		'#weight'=>1,
+		'#default_value' => $alerttitle,
+		'#required' => TRUE,
+	);
+
+  $form['site_alert_defensie_volkel_content'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Content',
+    '#default_value' => $alert,
+    '#required' => TRUE,
+    '#rows' => 4,
+	  '#weight'=>2,
+  );
+
+  return system_settings_form($form, FALSE);
+}
+
+/**
+ * Create the page for and link to the form.
+ */
+function site_alert_defensie_volkel_menu() {
+	
+	$items = array();
+	
+	$items['admin/defensie'] = array(
+		'title' => 'Defensie main menu',
+		'description' => '',
+		'position' => 'left',
+		'weight' => -100, // Less weight so that it will appear to the extreme left, before dashboard.
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('site_alert_defensie_volkel_admin'),
+		'access arguments' => array('administer alerts settings volkel'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	
+	$items['admin/defensie/alerts'] = array(
+		'title' => 'Alert system',
+		'description' => t('Fullscreen alert system for defensie'),
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('site_alert_defensie_volkel_admin'),
+		'access arguments' => array('administer alerts settings volkel'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	
+	
+	$items['admin/defensie/alerts/site_alert_defensie_volkel'] = array(
+    'title' => 'Site Alert Site Alert Defensie Volkel',
+    'description' => 'Toggle alerts on/off and configure the title and contents',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('site_alert_defensie_volkel_admin'),
+	'access arguments' => array('administer alerts settings volkel'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+	
+
+  $items['ajax/site_alert_defensie_volkel'] = array(
+    'title' => 'Site Alert',
+    'page callback' => 'site_alert_defensie_volkel_get_alert',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
+  );
+  
+  return $items;
+}
+
+/**
+ * Create a new permission to administer Site Alerts.
+ *
+ * This permission can be given to any role.
+ */
+function site_alert_defensie_volkel_permission() {
+
+  return array(
+	  'administer alerts settings volkel' => array(
+		  'title' => t('Administer alerts settings'),
+		  'description' => t('Allow users to administer alerts settings volkel'),
+    ),
+  );
+}
+
+/**
+ * Callback to get site alert information.
+ */
+function site_alert_defensie_volkel_get_alert() {
+  $level = variable_get('site_alert_defensie_volkel_severity');
+  $alert = variable_get('site_alert_defensie_volkel_content');
+  $alerttitle = variable_get('site_alert_defensie_volkel_title');
+
+	if (variable_get('site_alert_defensie_volkel_active', FALSE)) {
+     	 $output = array(
+     	 	 '#theme' => 'site_alert',
+			 '#level' => $level,
+			 '#alerttitle' => $alerttitle,
+			 '#alert' => $alert,
+			
+      );
+      print render($output);
+      drupal_exit();
+	}
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function site_alert_defensie_volkel_block_info() {
+  $blocks = array();
+  $blocks['site_alert_defensie_volkel'] = array(
+    // The name that will appear in the block list.
+    'info' => t('Site Alert Site Alert Defensie Volkel'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function site_alert_defensie_volkel_block_view() {
+
+  drupal_add_js(drupal_get_path('module', 'site_alert_defensie_volkel') . '/site_alert_defensie_volkel.js');
+  drupal_add_js(array('site_alert_defensie_volkel' => array('timeout' =>  variable_get('site_alert_defensie_volkel_timeout', site_alert_defensie_volkel_TIMEOUT_DEFAULT))), 'setting');
+
+  $block = array('content' => array('#theme' => 'site_alert_defensie_volkel_wrapper'));
+  return $block;
+}

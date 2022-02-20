@@ -1,0 +1,4 @@
+<span class="buttonsright">
+<!--        <button class="LayersOptions ownbutton icons" data-toggle="tooltip" data-placement="bottom" title="--><?php //print t('Layer Options Menu.'); ?><!--"><i id="LayersOptions" class="fas fa-sliders-h" data-toggle="modal" data-target=".layer-options-modal" ></i></button>-->
+        <button data-link="/klant/preview?id=<?php print $slideid; ?>" class=" iframe-popup ownbutton icons" data-width="1050" data-height="650" data-toggle="tooltip" data-placement="bottom" title="<?php print t('See a preview of the stream...'); ?>"><i class="far fas fa-tv"></i></button>
+        <button class="saveStream ownbutton icons form-submit" data-toggle="tooltip" data-placement="bottom" title="<?php print t("Save your stream..."); ?>" id="save"><i id="savelayerbutton" class="far fa-save icons"></i></button>

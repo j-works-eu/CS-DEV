@@ -1,0 +1,1435 @@
+<?php
+
+function homemade_menu() {
+
+  $items = array();
+
+//  $items['pushreclame/module'] = array(
+//    'page callback' => 'homemade_layer_addon',
+//    'page arguments' => array(2, 3),
+//    'access callback' => TRUE,
+//    'type' => MENU_CALLBACK,
+//  );
+
+  $items['admin/homemade'] = array(
+    'title' => 'CLOUD SCREEN SETTINGS',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('homemade_admin_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'weight' => 1
+  );
+
+	$items['bedrijfsnaam/autocomplete'] = array(
+		'title' => t('AutoComp Menu'),
+		'page callback' => 'selectAllBedrijven',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['naamklant/autocomplete'] = array(
+		'title' => t('Klant naam'),
+		'page callback' => 'selectAllklantnamen',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['companysubdivision/autocomplete'] = array(
+		'title' => t('Company Subdivision'),
+		'page callback' => 'selectcompanysubdivision',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['specialgroup/autocomplete'] = array(
+		'title' => t('Special Group'),
+		'page callback' => 'selectspecialgroup',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['specialeditor/autocomplete'] = array(
+		'title' => t('Special Editor'),
+		'page callback' => 'selectspecialeditor',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['usermailadres/autocomplete'] = array(
+		'title' => t('User mail'),
+		'page callback' => 'selectusermail',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['userselectrole/autocomplete'] = array(
+		'title' => t('User roles'),
+		'page callback' => 'selectroles',
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_CALLBACK,
+	);
+
+  return $items;
+}
+
+function homemade_admin_settings_form($form) {
+
+  $form['CSsettingformset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Cloud Screen Site wide settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'CSSW'
+  );
+
+
+    $form['CSsettingformset']['home_storing'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY PHONE NUMBER FOR CUSTOMERS')),
+      '#default_value' => variable_get('home_storing', '06 123 456 78'),
+      '#size' => 16,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_storing_email'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY E_MAIL FOR FRONT PAGE')),
+      '#default_value' => variable_get('home_storing_email', 'storing@cloudscreen.nl'),
+      '#size' => 50,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_emailstoring'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t("COMPANY E-MAIL WHERE ERROR'S CAN BE SEND TO")),
+      '#default_value' => variable_get('home_emailstoring', 'storing@cloudscreen.nl'),
+      '#size' => 30,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_kvk'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY (KVK) NUMBER')),
+      '#default_value' => variable_get('home_kvk', 'NL.1234567890'),
+      '#size' => 30,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_st'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY STREET AND HOUSE NUMBER')),
+      '#default_value' => variable_get('home_st', '........'),
+      '#size' => 30,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_po'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY ZIPCODE')),
+      '#default_value' => variable_get('home_po', '........'),
+      '#size' => 30,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_pl'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t('COMPANY PLACE')),
+      '#default_value' => variable_get('home_pl', '........'),
+      '#size' => 50,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['home_storing'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'placeholder' => t("PHONE NUMBER FOR ISSUE'S WHERE CUSTOMERS CAN CALL")),
+      '#default_value' => variable_get('home_storing', '06 123 456 78'),
+      '#size' => 16,
+      '#group' => 'CSSW'
+    );
+
+    $form['CSsettingformset']['header_bg'] = array(
+      '#type'     => 'media',
+      '#theme'         => 'media_widget',
+      '#title'    => t('Background Image'),
+      '#description'   => t('Upload the background image for login screen'),
+      '#required' => FALSE,
+      '#progress_indicator' => 'bar',
+      '#progress_message' => 'One moment while we save your file...',
+      '#upload_location' => 'public://',
+      '#upload_validators' => array(
+        'file_validate_extensions' => array('mp4 jpg jpeg'),
+      ),
+      '#default_value' => variable_get('header_bg', ''),
+      '#group' => 'CSSW'
+    );
+
+
+  $form['CSAPIsettingformset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('API KEYS SETTINGS'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'CSAPI'
+  );
+
+      $form['CSAPIsettingformset']['home_openweathermap_api'] = array(
+        '#type' => 'textfield',
+        '#title' => t('OPENWEATHERMAP API KEY'),
+        '#attributes' => array(
+          'placeholder' => t('OPENWEATHERMAP API KEY')),
+        '#default_value' => variable_get('home_openweathermap_api', ''),
+        '#size' => 120,
+        '#group' => 'CSAPI'
+      );
+
+      $form['CSAPIsettingformset']['ipinfo_api'] = array(
+        '#type' => 'textfield',
+        '#title' => t('IPINFO.IO API KEY'),
+        '#attributes' => array(
+          'placeholder' => t('IPINFO.IO API KEY')),
+        '#default_value' => variable_get('ipinfo_api', ''),
+        '#size' => 120,
+        '#group' => 'CSAPI'
+      );
+
+  $form['CSFTPsettingformset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('REMOTE FTP BACKUP SETTINGS'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'CSFTP'
+  );
+
+      $form['CSFTPsettingformset']['home_ftp_host'] = array(
+        '#type' => 'textfield',
+        '#title' => t('HOST'),
+        '#attributes' => array(
+          'placeholder' => t('FTP HOST')),
+        '#default_value' => variable_get('home_ftp_host', ''),
+        '#size' => 60,
+        '#group' => 'CSFTP'
+      );
+
+      $form['CSFTPsettingformset']['home_ftp_username'] = array(
+        '#type' => 'textfield',
+        '#title' => t('USERNAME'),
+        '#attributes' => array(
+          'placeholder' => t('FTP USERNAME')),
+        '#default_value' => variable_get('home_ftp_username', ''),
+        '#size' => 100,
+        '#group' => 'CSFTP'
+      );
+
+      $form['CSFTPsettingformset']['home_ftp_password'] = array(
+        '#type' => 'textfield',
+        '#title' => t('PASSWORD'),
+        '#attributes' => array(
+          'placeholder' => t('FTP PASSWORD')),
+        '#default_value' => variable_get('home_ftp_password', ''),
+        '#size' => 100,
+        '#group' => 'CSFTP'
+      );
+
+
+  $form['CSSTREAMSsettingformset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('STREAMS OPTIONS/SETTINGS'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'CSSTREAMS'
+  );
+
+    $form['CSSTREAMSsettingformset']['home_streams_ftp_sub'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('STREAM FTP SETTINGS'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'CSSTREAMSSUB'
+    );
+
+      $form['CSSTREAMSsettingformset']['home_streams_ftp_sub']['home_streams_ftp_host'] = array(
+        '#type' => 'textfield',
+        '#title' => t('HOST'),
+        '#attributes' => array(
+          'placeholder' => t('STREAMS BACKUP FTP HOST')),
+        '#default_value' => variable_get('home_streams_ftp_host', ''),
+        '#size' => 60,
+        '#group' => 'CSSTREAMSSUB'
+      );
+
+        $form['CSSTREAMSsettingformset']['home_streams_ftp_sub']['home_streams_ftp_username'] = array(
+          '#type' => 'textfield',
+          '#title' => t('STREAMS BACKUP FTP USERNAME'),
+          '#attributes' => array(
+            'placeholder' => t('FTP USERNAME')),
+          '#default_value' => variable_get('home_streams_ftp_username', ''),
+          '#size' => 100,
+          '#group' => 'CSSTREAMSSUB'
+        );
+
+        $form['CSSTREAMSsettingformset']['home_streams_ftp_sub']['home_streams_ftp_password'] = array(
+          '#type' => 'textfield',
+          '#title' => t('STREAMS BACKUP FTP PASSWORD'),
+          '#attributes' => array(
+            'placeholder' => t('FTP PASSWORD')),
+          '#default_value' => variable_get('home_streams_ftp_password', ''),
+          '#size' => 100,
+          '#group' => 'CSSTREAMSSUB'
+        );
+
+    $form['CSSTREAMSsettingformset']['home_streams_remove_sub'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('STREAMS REMOVAL SETTINGS'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'CSSTREAMSREMOVE'
+    );
+
+      $form['CSSTREAMSsettingformset']['home_streams_remove_sub']['home_streams_folder_location'] = array(
+        '#type' => 'textfield',
+        '#title' => t('STREAMS BACKUPS FOLDER LOCATION'),
+        '#attributes' => array(
+          'placeholder' => t('FOLDER LOCATION')),
+        '#default_value' => variable_get('home_streams_folder_location', ''),
+        '#size' => 100,
+        '#group' => 'CSSTREAMSREMOVE'
+      );
+
+      $form['CSSTREAMSsettingformset']['home_streams_remove_sub']['home_streams_folder_retention'] = array(
+        '#type' => 'textfield',
+        '#title' => t('STREAMS BACKUPS REMOVED AFTER X DAYS'),
+        '#attributes' => array(
+          'placeholder' => t('DAYS')),
+        '#default_value' => variable_get('home_streams_folder_retention', ''),
+        '#size' => 10,
+        '#group' => 'CSSTREAMSREMOVE'
+      );
+
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'homemade_admin_settings_form_submit';
+  return $form;
+
+ // return system_settings_form($form);
+}
+
+function homemade_admin_settings_form_submit($form, &$form_state) {
+  $form['CSsettingformset']['header_bg']['#file']->status = FILE_STATUS_PERMANENT;
+  file_save($form['CSsettingformset']['header_bg']['#file']);
+}
+
+	function selectAllBedrijven($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('field_data_field_bedrijfsnaam', 'bn');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('bn', array('field_bedrijfsnaam_value'))
+			->condition('bn.field_bedrijfsnaam_value', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->field_bedrijfsnaam_value] = check_plain($row->field_bedrijfsnaam_value);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+
+
+	}
+
+
+	function selectAllklantnamen($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('field_data_field_klantnaam', 'bn');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('bn', array('field_klantnaam_value'))
+			->condition('bn.field_klantnaam_value', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->field_klantnaam_value] = check_plain($row->field_klantnaam_value);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+	function selectcompanysubdivision($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select ('field_data_field_company_subdivision', 'bn');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('bn', array('field_company_subdivision_value'))
+			->condition('bn.field_company_subdivision_value', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->field_company_subdivision_value] = check_plain($row->field_company_subdivision_value);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+	function selectspecialgroup($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('field_data_field_special_group', 'bn');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('bn', array('field_special_group_value'))
+			->condition('bn.field_special_group_value', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->field_special_group_value] = check_plain($row->field_special_group_value);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+	function selectspecialeditor($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('field_data_field_special_editor', 'bn');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('bn', array('field_special_editor_value'))
+			->condition('bn.field_special_editor_value', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->field_special_editor_value] = check_plain($row->field_special_editor_value);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+	function selectusermail($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('users', 'u');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('u', array('mail'))
+			->condition('u.mail', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->mail] = check_plain($row->mail);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+	function selectroles($string) {
+
+		$matches = array();
+
+		// Some fantasy DB table which holds bedrijfsnaam
+		$query = db_select('role', 'r');
+
+		// Select rows that match the string
+		// Select rows that match the string
+		$return = $query
+			->distinct()
+			->fields('r', array('name'))
+			->condition('r.name', '%' . db_like($string) . '%', 'LIKE')
+			->range(0, 10)
+			->execute();
+
+		// add matches to $matches
+		foreach ($return as $row) {
+			$matches[$row->name] = check_plain($row->name);
+		}
+
+		// return for JS
+		drupal_json_output($matches);
+	}
+
+
+
+	/**
+	 * Implements unpublishing video uploads node and remove uploaded file.
+	 */
+
+
+function homemade_remove_converted_cron() {
+
+		// we only want to deal with messages (a content type)
+		$message_type = "converter";
+    $message_type_WIFI = "converter-wifi";
+
+		// grab all messages
+		$message_nodes = node_load_multiple(array(), array('type' => $message_type));
+    $message_nodes_WIFI = node_load_multiple(array(), array('type' => $message_type));
+		// set up the timestamp for the expiry
+		$message_search_date = strtotime("- 15 minutes"); // UNIX timestamp for 30 days ago
+
+		// now loop through messages, & if they are old, expire them
+		foreach($message_nodes as $m) {
+
+			$obj = entity_metadata_wrapper('node', $m);
+
+			// when was it last updated, & is it still published?
+			$last_update = $obj->changed->value();
+			$published = $obj->status->value();
+
+			// if it's still published & it's not recent, then unpublish it and delete it
+			if(($message_search_date > $last_update) && $published<>0) {
+				$obj->status = 0;
+				$obj->save();
+			}
+		}
+
+    // now loop through messages, & if they are old, expire them
+    foreach($message_nodes_WIFI as $m) {
+
+      $obj = entity_metadata_wrapper('node', $m);
+
+      // when was it last updated, & is it still published?
+      $last_update = $obj->changed->value();
+      $published = $obj->status->value();
+
+      // if it's still published & it's not recent, then unpublish it and delete it
+      if(($message_search_date > $last_update) && $published<>0) {
+        $obj->status = 0;
+        $obj->save();
+      }
+    }
+	}
+
+
+function homemade_user_offline() {
+
+  $user_list = array();
+  $query = db_select('sessions', 'ss');
+  $query->join('users', 'u', 'u.uid = ss.uid');
+  $query->join('field_data_field_mail_offline', 'mo', 'mo.entity_id = ss.uid');
+  $query->fields('ss', array('timestamp'));
+  $query->fields('u', array('uid'));
+  $query->fields('u', array('mail'));
+  $query->fields('u', array('name'));
+  $query->fields('mo', array('field_mail_offline_value'));
+  $query->fields('mo', array('mail_send'));
+  $query->condition('timestamp', REQUEST_TIME - (60 * 5), '<');
+  $result = $query->execute();
+
+  if ($result) {
+    foreach ($result as $row) {
+      $reclame_id = $user_list[] = $row->name;
+      $uid = $user_list[] = $row->uid;
+      $status = $user_list[] = $row->field_mail_offline_value;
+      $mail_send = $user_list[] = $row->mail_send;
+
+      if ($status == 1 && $mail_send == 1) // UPDATE STATUS TO 2 AND SEND OFFLINE MAIL
+      {
+        db_update('field_data_field_mail_offline')
+          ->fields(array(
+            'field_mail_offline_value' => 2
+          ))
+          ->condition('entity_id', $uid)
+          ->execute();
+
+        db_update('field_data_field_mail_offline')
+          ->fields(array(
+            'mail_send' => 2
+          ))
+          ->condition('entity_id', $uid)
+          ->execute();
+
+        db_update('art_revolution')
+          ->fields(array(
+            'offline_status' => 2
+          ))
+          ->condition('uid', $uid)
+          ->execute();
+
+        $to = home_emailstoring();
+        $from = home_emailstoring();
+        // Set headers etc
+        $subject = "Er is een klant offline.";
+        $body = "De klant met Reclame ID:$reclame_id is offline";
+
+        if (simple_mail_send($from, $to, $subject, $body) != TRUE) {
+          watchdog('reclame', 'offline mail versturen mislukt!', array(), WATCHDOG_ERROR);
+
+        }
+        else {
+          watchdog('reclame', 'offline mail verstuurd!', array(), WATCHDOG_INFO);
+
+        }
+
+        // drupal_set_message($user_list[] = 'UserID ' . $uid . ' MAIL SEND ID ' . $mail_send . 'STATUS ' . $status . "timestamp: " . $user_list[] = $row->timestamp );
+      }
+    }
+  }
+}
+
+function homemade_user_online() {
+
+  $user_list = array();
+  $query = db_select('sessions', 'ss');
+  $query->join('users', 'u', 'u.uid = ss.uid');
+  $query->join('field_data_field_mail_offline', 'mo', 'mo.entity_id = ss.uid');
+  $query->fields('ss', array('timestamp'));
+  $query->fields('u', array('uid'));
+  $query->fields('u', array('mail'));
+  $query->fields('u', array('name'));
+  $query->fields('mo', array('field_mail_offline_value'));
+  $query->fields('mo', array('mail_send'));
+  $query->condition('timestamp', REQUEST_TIME - (60 * 5), '>');
+  $result = $query->execute();
+
+  if ($result) {
+    foreach ($result as $row) {
+      $uid = $user_list[] = $row->uid;
+      $status = $user_list[] = $row->field_mail_offline_value;
+      $mail_send = $user_list[] = $row->mail_send;
+
+      if ($status == 2 && $mail_send == 2) // UPDATE STATUS TO 1 BECAUSE DISPLAY ID IS WEER ONLINE
+      {
+        db_update('field_data_field_mail_offline')
+          ->fields(array(
+            'field_mail_offline_value' => 1
+          ))
+          ->condition('entity_id', $uid)
+          ->execute();
+
+        db_update('field_data_field_mail_offline')
+          ->fields(array(
+            'mail_send' => 1
+          ))
+          ->condition('entity_id', $uid)
+          ->execute();
+
+        db_update('art_revolution')
+          ->fields(array(
+            'offline_status' => 1
+          ))
+          ->condition('uid', $uid)
+          ->execute();
+      }
+    }
+  }
+}
+
+/**
+ * Implements user reclame snelheid refresh pagina.
+ */
+
+function homemade_refresh_page() {
+  global $user;
+  $user = user_load($user->uid);
+  $user_wrapper = entity_metadata_wrapper('user', $user);
+  if (!empty($user_wrapper->field_pagina_reload_snelheid)) {
+    try {
+      return $user_wrapper->field_pagina_reload_snelheid->value();
+    } catch (EntityMetadataWrapperException $e) {
+    }
+  }
+}
+
+/**
+ * Implements user reclame snelheid refreshTime pagina.
+ */
+
+function homemade_refreshTime() {
+  global $user;
+  $user = user_load($user->uid);
+  $user_wrapper = entity_metadata_wrapper('user', $user);
+  if (!empty($user_wrapper->field_refreshtime)) {
+    try {
+      return $user_wrapper->field_refreshtime->value();
+    } catch (EntityMetadataWrapperException $e) {
+    }
+  }
+}
+
+function art_revolution_selectFields($reclame_id) {
+
+  global $user;
+  $cid = 'field:user:' . $user->uid;
+  cache_clear_all($cid, 'cache_field');
+
+  $q = "SELECT * FROM {art_revolution} WHERE username = :username";
+  $result = db_query($q, array(':username' => $reclame_id));
+  foreach ($result as $row) {
+    return $row;
+  }
+}
+
+function art_revolution_fpr_selectFields($sessionID) {
+  $selectFPRFields = "SELECT * FROM {art_revolution_fpr} WHERE sessionID = :sessionID";
+  $result = db_query($selectFPRFields, array(':sessionID' => $sessionID));
+  foreach ($result as $row) {
+    return $row;
+  }
+}
+
+/**
+ * @db_update Force Refresh Page (True=1 False=3)
+ */
+
+function homemade_force_refresh_page() {
+  global $user;
+  $user_wrapper = entity_metadata_wrapper('user', $user->uid);
+  $frp = $user_wrapper->field_force_refresh_page->value();
+
+  if ($frp == 1) {
+
+    db_update("field_data_field_force_refresh_page")
+      ->fields(array(
+        'field_force_refresh_page_value' => 2,
+      ))
+      ->condition('entity_id', $user->uid)
+      ->execute();
+
+    db_update("art_revolution")
+      ->fields(array(
+        'field_force_refresh_page_value' => 2,
+      ))
+      ->condition('uid', $user->uid)
+      ->execute();
+
+    cache_clear_all();
+  }
+}
+
+/**
+ * Implements users can't view/edit their own profiles (permissions --> access user profile.
+ */
+
+function homemade_menu_alter(&$items) {
+  $items['user/%user']['access arguments'] = array('access user profiles');
+  $items['user/%user']['access callback'] = 'user_access';
+  $items['user/%user/edit']['access arguments'] = array('administer users');
+  $items['user/%user/edit']['access callback'] = 'user_access';
+}
+
+
+
+
+/**
+ * Implements storingsnummer().
+ */
+
+function homemade_background_login() {
+	$header_bg_fid = variable_get('header_bg', '');
+  return file_create_url(file_load($header_bg_fid)->uri);
+	}
+
+
+function homemade_storing() {
+  $result = variable_get('home_storing', '06 123 456 78');
+
+  return $result;
+}
+
+
+
+/**
+ * Implements e-mailadres front page.
+ */
+
+function homemade_storing_email() {
+  $result = variable_get('home_storing_email', 'storing@cloudscreen.nl');
+  return $result;
+}
+
+function homemade_kvk() {
+  $result = variable_get('home_kvk', 'NL.1234567890');
+
+  return $result;
+}
+
+function homemade_btw() {
+  $result = variable_get('home_btw', 'BTW123442435');
+
+  return $result;
+}
+
+/**
+ * Adres Push Reclame.
+ */
+
+function homemade_straat() {
+  $result = variable_get('home_st', '........');
+
+  return $result;
+}
+
+function homemade_postcode() {
+  $result = variable_get('home_po', '........');
+
+  return $result;
+}
+
+function homemade_plaats() {
+  $result = variable_get('home_pl', '........');
+
+  return $result;
+}
+
+
+function home_emailstoring() {
+  $result = variable_get('home_emailstoring', 'storing@cloudscreen.nl');
+
+  return $result;
+
+}
+
+
+/**
+ * Implements hook_views_api().
+ */
+//function homemade_views_api() {
+//  return array(
+//    'api' => 3,
+//    'path' => drupal_get_path('module', '/custom/homemade') . '/includes/views',
+//  );
+//}
+
+
+/**
+ * Implements hook_views_data().
+ */
+function homemade_views_data() {
+
+  $data = array();
+
+  $data['art_revolution']['table']['group'] = t('Display settings');
+
+  $data['art_revolution']['table']['base'] = array(
+    'title' => t('Display slider'),
+    'help' => t('Contains records we want exposed to Views.'),
+  );
+
+	// The bedrijf field
+	$data['art_revolution']['special_editor'] = array(
+		'title' => t('special Editor'),
+		'help' => t('The record name.'),
+		'field' => array(
+			'handler' => 'views_handler_field',
+			'click sortable' => TRUE, // This is use by the table display plugin.
+		),
+		'sort' => array(
+			'handler' => 'views_handler_sort',
+		),
+		'filter' => array(
+			'handler' => 'views_handler_filter_string',
+		),
+		'argument' => array(
+			'handler' => 'views_handler_argument_numeric',
+		),
+		'field' => array(
+			'handler' => 'views_handler_field_user',
+		),
+
+	);
+
+  // The ID field
+  $data['art_revolution']['id'] = array(
+    'title' => t('ID'),
+    'help' => t('The record ID.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+
+// The bedrijf field
+  $data['art_revolution']['name'] = array(
+    'title' => t('Name'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+// The uid user field
+  $data['art_revolution']['uid'] = array(
+    'title' => t('UID'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+// The bedrijf field
+  $data['art_revolution']['username'] = array(
+    'title' => t('Username'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+
+  );
+
+  // The bedrijf field
+  $data['art_revolution']['postcode'] = array(
+    'title' => t('Postcode'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+  // Global refresh
+  $data['art_revolution']['refresh'] = array(
+    'title' => t('Global Refresh timer'),
+    'help' => t('Every x time stream gets refreshed.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+  // Refresh at a specific Time (Hours)
+  $data['art_revolution']['refreshHours'] = array(
+    'title' => t('Refresh at a specific Time (Hours)'),
+    'help' => t('Refresh at a specific Time (Hours)'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+  // Refresh at a specific Time (Minutes)
+  $data['art_revolution']['refreshMinutes'] = array(
+    'title' => t('Refresh at a specific Time (Minutes)'),
+    'help' => t('Refresh at a specific Time (Minutes)'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+  // password field
+  $data['art_revolution']['password'] = array(
+    'title' => t('Password'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+  // mail field
+  $data['art_revolution']['mail'] = array(
+    'title' => t('mail'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+  // Naam van de klant
+  $data['art_revolution']['klantnaam'] = array(
+    'title' => t('Naam van de klant'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+	  'argument' => array(
+		  'handler' => 'views_handler_argument_numeric',
+	  ),
+	  'field' => array(
+		  'handler' => 'views_handler_field_user',
+	  ),
+  );
+
+
+	// The bedrijf field
+	$data['art_revolution']['company_subdivision'] = array(
+		'title' => t('company_subdivision'),
+		'help' => t('The record company_subdivision.'),
+		'field' => array(
+			'handler' => 'views_handler_field',
+			'click sortable' => TRUE, // This is use by the table display plugin.
+		),
+		'sort' => array(
+			'handler' => 'views_handler_sort',
+		),
+		'filter' => array(
+			'handler' => 'views_handler_filter_string',
+		),
+		'argument' => array(
+			'handler' => 'views_handler_argument_numeric',
+		),
+		'field' => array(
+			'handler' => 'views_handler_field_user',
+		),
+
+	);
+
+	// The bedrijf field
+	$data['art_revolution']['special_group'] = array(
+		'title' => t('Special group'),
+		'help' => t('The record name.'),
+		'field' => array(
+			'handler' => 'views_handler_field',
+			'click sortable' => TRUE, // This is use by the table display plugin.
+		),
+		'sort' => array(
+			'handler' => 'views_handler_sort',
+		),
+		'filter' => array(
+			'handler' => 'views_handler_filter_string',
+		),
+		'argument' => array(
+			'handler' => 'views_handler_argument_numeric',
+		),
+		'field' => array(
+			'handler' => 'views_handler_field_user',
+		),
+
+	);
+
+  // Offline status --> for sending mails
+  $data['art_revolution']['offline_status'] = array(
+    'title' => t('Offline status'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+  // Force refresh status
+  $data['art_revolution']['field_force_refresh_page_value'] = array(
+    'title' => t('Force refresh page status'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+  // Airdoid
+  $data['art_revolution']['teamviewer'] = array(
+    'title' => t('Teamviewer buddy ID'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+	// plaatsing
+	$data['art_revolution']['plaatsing'] = array(
+		'title' => t('Plaatsing van de box'),
+		'help' => t('The record name.'),
+		'field' => array(
+			'handler' => 'views_handler_field',
+			'click sortable' => TRUE, // This is use by the table display plugin.
+		),
+		'sort' => array(
+			'handler' => 'views_handler_sort',
+		),
+		'filter' => array(
+			'handler' => 'views_handler_filter_string',
+		),
+	);
+
+
+	// disable display status
+	$data['art_revolution']['disable'] = array(
+		'title' => t('disable status'),
+		'help' => t('The record name.'),
+		'field' => array(
+			'handler' => 'views_handler_field',
+			'click sortable' => TRUE, // This is use by the table display plugin.
+		),
+		'sort' => array(
+			'handler' => 'views_handler_sort',
+		),
+		'filter' => array(
+			'handler' => 'views_handler_filter_string',
+		),
+	);
+
+
+
+  // Lock status
+  $data['art_revolution']['locked'] = array(
+    'title' => t('Locked or unlock status'),
+    'help' => t('The record name.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE, // This is use by the table display plugin.
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+
+
+  return $data;
+
+}
+
+
+
+/**
+ * Implements count of e-mailadresses for total of reclame blocks().
+ */
+
+function homemade_total_reclame_count() {
+  global $user;
+  $count = db_query('SELECT COUNT(mail) AS count FROM {art_revolution} WHERE mail = :mail',
+    array(':mail' => $user->mail))->fetchField();
+
+  return $count;
+}
+
+function homemade_user_operations($form_state = array()) {
+
+		$operations = array(
+			'logout' => array(
+				'label' => t('Logout the selected users'),
+				'callback' => 'homemade_user_operations_logout',
+			),
+		);
+
+		return $operations;
+}
+
+function homemade_user_operations_logout($accounts) {
+		foreach ($accounts as $uid) {
+			drupal_session_destroy_uid($uid);
+		}
+}
+
+
+function homemade__getUsersByRole($rid = '5', $mail = '') {
+  $query = db_select('users', 'u');
+  $query->innerJoin('users_roles', 'r', 'r.uid = u.uid');
+  $query->fields('u', array('uid'));
+  $query->condition('u.mail', $mail);
+  $query->condition('r.rid', $rid);
+  $query->orderBy('u.name');
+  $result = $query->execute();
+
+  $users = array();
+  foreach ($result as $user) {
+    $users[] = $user;
+  }
+  return $users;
+}
+
+/**
+ * Convert bytes to KB / MB / GB... for user usage stats.
+ */
+
+
+function homemade_format_size($size) {
+  $mod = 1024;
+  $units = explode(' ','B KB MB GB TB PB');
+  for ($i = 0; $size > $mod; $i++) {
+    $size /= $mod;
+  }
+  return round($size, 2) . ' ' . $units[$i];
+}
+
+function homemade_time_elapsed_string($datetime, $full = false) {
+  $now = new DateTime;
+  $ago = new DateTime($datetime);
+  $diff = $now->diff($ago);
+
+  $diff->w = floor($diff->d / 7);
+  $diff->d -= $diff->w * 7;
+
+  $string = array(
+    'y' => t('year'),
+    'm' => t('month'),
+    'w' => t('week'),
+    'd' => t('day'),
+    'h' => t('hour'),
+    'i' => t('minute'),
+    's' => t('second'),
+  );
+  foreach ($string as $k => &$v) {
+    if ($diff->$k) {
+      $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+    } else {
+      unset($string[$k]);
+    }
+  }
+
+  if (!$full) $string = array_slice($string, 0, 3);
+  return $string ? implode(', ', $string) . t(' Online') : t('just now');
+}
+
+function homemade_ftp_file_put_contents($remote_file, $file_string, $sub_folder, $folder) {
+
+ // GET FTP VARS
+
+  $ftpHost = variable_get('home_ftp_host', '');
+  $ftpUsername = variable_get('home_ftp_username', '');
+  $ftpPassword = variable_get('home_ftp_password', '');
+
+// Create temporary file
+  $local_file = fopen('php://temp', 'r+');
+  fwrite($local_file, $file_string);
+  rewind($local_file);
+
+// FTP connection
+  $ftp_conn = ftp_connect($ftpHost);
+
+// FTP login
+  $login_result = ftp_login($ftp_conn, $ftpUsername,$ftpPassword);
+
+  $dirServ = '/'.$sub_folder.'/' . $folder;
+
+if (!ftp_chdir($ftp_conn, $dirServ)) {
+  if (ftp_mkdir($ftp_conn, $dirServ)){
+    if (ftp_chdir($ftp_conn, $dirServ)) {
+      if($login_result) {
+        ftp_fput($ftp_conn, $dirServ.'/'.$remote_file, $local_file, FTP_ASCII);
+      } else {
+        //Error handling
+        // create a watchdog when error
+        //echo('<p>FTP error: The file could not be written to the FTP server.</p>');
+      }
+    }
+  } else {
+    // create a watchdog when error not able to create directory
+  }
+} else {
+    if($login_result) {
+      ftp_fput($ftp_conn, $dirServ.'/'.$remote_file, $local_file, FTP_ASCII);
+    } else {
+      //Error handling
+      // create a watchdog when error
+      //echo('<p>FTP error: The file could not be written to the FTP server.</p>');
+    }
+}
+
+  ftp_close($ftp_conn);
+  fclose($local_file);
+}
+
+function homemade_api_openWeather() {
+  return  variable_get('home_openweathermap_api', '');
+}
+function homemade_api_ipinfo() {
+  return variable_get('ipinfo_api', '');
+}
+
+/**
+ * Implements custom functions on cron run.
+ */
+
+function homemade_cron() {
+
+}

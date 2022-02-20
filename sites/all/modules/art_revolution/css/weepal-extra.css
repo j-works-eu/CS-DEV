@@ -1,0 +1,220 @@
+div.video-widget-data {
+  width: 100% !important;
+}
+
+/* Aanpassingen popup frame video converter upload (stylish verantwoord */
+.page-node-248 .field-name-body{
+  text-align: center;
+}
+
+
+.page-node-248 h1#page-title {
+  color: white;
+  display: none;
+}
+
+.page-node-248 #breadcrumb {
+  display: none;
+}
+
+.page-node-248 #header {
+  display: none;
+}
+
+.page-node-248 #block-formblock-converter h2 {
+  display: none;
+}
+
+.page-node-248 .form-managed-file .form-submit {
+  display: none;
+}
+
+.page-node-248 #footer {
+  border: 0;
+}
+
+.videoinfo3, .videoinfo4 {
+  color: #f96969;
+  font-size: 13px;
+}
+
+#converter-wifi-node-form, #converter-node-form{
+  display: none;
+}
+
+.node-converter-form .form-actions.form-wrapper {
+  display: block !important;
+  text-align: center;
+}
+
+#converter-wifi-node-form .form-type-managed-file label {
+  display: none;
+}
+
+#converter-wifi-node-form strong, #converter-node-form strong {
+  color: #3498DB;
+}
+
+#converter-wifi-node-form .form-actions .form-submit, .buttons .form-submit, #converter-node-form .form-actions .form-submit, .buttons .form-submit {
+  background-color: #3498DB;
+  border-color: #3498DB;
+}
+
+#converter-wifi-node-form .hide-submit-processing:before, #converter-node-form .hide-submit-processing:before {
+  content: "CONVERTING";
+  color: #f9696a !important;
+  position: absolute;
+}
+
+#converter-wifi-node-form .hide-submit-processing, #converter-node-form .hide-submit-processing {
+  height: 100px;
+  padding: 40px 4px 4px 7px;
+  background: url(/sites/all/modules/hide_submit/processing.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 157px 100px;
+  color: transparent;
+  letter-spacing: 1px;
+  margin-bottom: -40px;
+}
+
+
+#converter-wifi-node-form #edit-actions,  #converter-node-form #edit-actions {
+  text-align: center;
+  display: block;
+}
+
+#converter-wifi-node-form , #converter-node-form {
+  text-align: center;
+  margin: 0 auto;
+}
+
+#converter-wifi-node-form input[type="file"], #converter-node-form input[type="file"] {
+  height: unset;
+  font-size: 12px;
+  padding: 0.5625rem 1.25rem 0.5625rem 1.25rem;
+  line-height: unset;
+  border: 1px solid #3498DB;
+  background-color: #3498DB;
+  color: #ffffff;
+}
+
+#converter-wifi-node-form .video-widget-data, #converter-node-form .video-widget-data {
+  float: initial;
+  width: 100% !important;
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
+#converter-wifi-node-form #edit-field-video label, #converter-node-form #edit-field-video label {
+  display: none;
+}
+
+#converter-node-form .videoinfo1 {
+  color: #3498DB;
+}
+
+#converter-node-form .videoinfo2 {
+  color: #3498DB;
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+#converter-wifi-node-form #edit-field-video-2, #converter-node-form #edit-field-video {
+  margin-top: 30px;
+}
+
+#converter-wifi-node-form .form-item .description, #converter-node-form .form-item .description {
+  margin-top: 30px;
+  margin-bottom: 25px;
+}
+
+.wifi svg {
+  font-size: 47px;
+  position: relative;
+  top: 13px;
+  color: #333333;
+}
+
+.wifi {
+  cursor: pointer;
+  margin-right: 40px;
+}
+
+.cable {
+  cursor: pointer;
+}
+
+span.videoinfo2 h3 {
+  text-transform: uppercase;
+}
+
+.wifidescription, .cabledescription {
+  margin-top: 24px;
+  font-weight: bold;
+  color: #3598db;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.node-type-converter .field-type-video, .node-type-converter-wifi .field-type-video {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.node-type-converter-wifi  h1#page-title, .node-type-converter  h1#page-title {
+  display: none;
+}
+
+.node-type-converter-wifi .region, .node-type-converter .region {
+  margin-top: 24px;
+  border: 1px solid #ffffff !important;
+}
+
+.view-video-file-s- td.views-field.views-field-php {
+  text-align: center;
+  box-shadow: rgb(0 0 0 / 19%) 0px 10px 20px, rgb(0 0 0 / 23%) 0px 6px 6px;
+}
+
+.view-video-file-s- td.views-field.views-field-php h2 {
+  font-size: 23px !important;
+  margin-bottom: -4px;
+  color: #97b54d !important;
+}
+
+/*MEDIA TAB USER FILES UNDER FILE UPLOAD*/
+
+
+ [aria-controls="media-tab-media_default--media_browser_2"] a {
+  background: #3498db !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px;
+}
+
+.media-browser-tab a#ui-id-1 {
+  border: 0 !important;
+  background: #444444 !important;
+  color: #ffffff !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  letter-spacing: 1px;
+}
+
+.media-browser-tab .views-exposed-form {
+  display: block;
+  text-align: center;
+}
+.media-browser-tab .views-exposed-widgets {
+  display: inline-block;
+}
+.media-browser-tab .totalcount {
+  text-align: center;
+}
+#media-tab-media_default--media_browser_my_files .views-exposed-widget.views-submit-button {
+  margin-top: 25px;
+}
+/* position: relative; */

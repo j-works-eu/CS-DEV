@@ -1,0 +1,119 @@
+<?php
+
+function cronRunner_streamsBackupFTP($remote_file, $file_string, $folder) {
+
+  // GET STREAM BACKUP FTP VARS
+
+  $ftpHost = variable_get('home_streams_ftp_host');
+  $ftpUsername = variable_get('home_streams_ftp_username');
+  $ftpPassword = variable_get('home_streams_ftp_password');
+
+  $local_file = fopen('php://temp', 'r+');
+  fwrite($local_file, $file_string);
+  rewind($local_file);
+
+  $ftp_conn = ftp_connect($ftpHost);
+  $login_result = ftp_login($ftp_conn, $ftpUsername,$ftpPassword);
+  $dirServ = '/' . $folder;
+
+  if (!ftp_chdir($ftp_conn, $dirServ)) {
+    if (ftp_mkdir($ftp_conn, $dirServ)){
+      if (ftp_chdir($ftp_conn, $dirServ)) {
+        if($login_result) {
+          ftp_fput($ftp_conn, $dirServ.'/'.$remote_file, $local_file, FTP_ASCII);
+        }
+      }
+    }
+  } else {
+    if($login_result) {
+      ftp_fput($ftp_conn, $dirServ.'/'.$remote_file, $local_file, FTP_ASCII);
+    }
+  }
+
+  ftp_close($ftp_conn);
+  fclose($local_file);
+}
+
+function cronRunner_streamsBackup_remove($path) {
+  // DELETE STREAMS BACKUPS FOLDER
+  $days = 86400 * variable_get('home_streams_folder_retention');
+  $files = glob("$path/{,*/,*/*/,*/*/*/}*.txt", GLOB_BRACE);
+
+  foreach ($files as $file) {
+    if (filemtime($file) < time() - $days) {
+      //print $file . '<br>';
+      unlink($file);
+    }
+  }
+}
+
+
+function RemoveEmptySubFolders($path) {
+  // DELETE STREAMS EMPTY FOLDERS
+  $empty=true;
+  foreach (glob($path.DIRECTORY_SEPARATOR."*") as $file) {
+    $empty &= is_dir($file) && RemoveEmptySubFolders($file);
+  }
+
+  return $empty && rmdir($path);
+}
+
+function cronRunner_streamImage2base64($uri) {
+  // CONVERT STREAM IMG TO BASE64
+
+  $path = drupal_realpath($uri);
+  if (!$data = file_get_contents($path)) {
+    $path = file_create_url($uri);
+    $data = file_get_contents($path);
+  }
+
+  return base64_encode($data);
+}
+
+
+function cronRunner_streamsBackup() {
+  // LOOP STREAMS AND MAKE BACKUP WITH REMOTE FTP
+
+  $allStreamsID = db_query("select * from {art_revolution} ORDER BY uid");foreach($allStreamsID as $value) {
+
+  $date = date("Y-m-d H:i");
+  $slideshow = new stdClass();
+  $json = base64_decode($value->settings);
+  $slideshow->settings = json_decode($json);
+  $json = base64_decode($value->data);
+  $slideshow->slides = json_decode($json);
+
+  for ($i = 0; $i < count($slideshow->slides); $i++) {
+    if (!empty($slideshow->slides[$i]->background_image_uri)) {
+      $slideshow->slides[$i]->image_content = cronRunner_streamImage2base64($slideshow->slides[$i]->background_image_uri);
+    }
+    for ($j = 0; $j < count($slideshow->slides[$i]->layers); $j++) {
+      if ($slideshow->slides[$i]->layers[$j]->type == 'image' && !empty($slideshow->slides[$i]->layers[$j]->image_uri)) {
+        $slideshow->slides[$i]->layers[$j]->image_content = cronRunner_streamImage2base64($slideshow->slides[$i]->layers[$j]->image_uri);
+      }
+    }
+  }
+
+  $data = json_encode($slideshow);
+  $data = base64_encode($data);
+
+  // REMOTE FTP FUNCTION
+  cronRunner_streamsBackupFTP($value->id. ' -- ' . $date.'.txt',$data, $value->id);
+
+  }
+}
+
+
+/**
+ * Implements custom functions on cron run.
+ */
+
+function cronRunner_cron() {
+  // START CRON RUNNER
+
+  $folder = variable_get('home_streams_folder_location'); // STREAM FOLDER BACKUPS CUSTOMERS
+
+  cronRunner_streamsBackup(); // BACKUP STREAMS
+  cronRunner_streamsBackup_remove($folder); // REMOVE OLD STREAM BACKUP FILES (OLDER THEN x DAY)
+  RemoveEmptySubFolders($folder); // REMOVE EMPTY FOLDERS)
+}

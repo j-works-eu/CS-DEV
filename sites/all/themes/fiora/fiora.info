@@ -1,0 +1,33 @@
+name = CS Main Stream Theme
+description = Cloud Screen Main Stream Theme...
+core = 7.x
+version = 2.1
+
+stylesheets[all][] = css/bootstrap.min.css
+stylesheets[all][] = css/jollyicons.css
+stylesheets[all][] = css/et-icons.css
+stylesheets[all][] = css/animate.css
+stylesheets[all][] = css/owl-carousel.css
+stylesheets[all][] = style.css
+stylesheets[all][] = css/all.css
+stylesheets[all][] = css/custom/custom.css
+stylesheets[all][] = css/extralayers.css
+stylesheets[all][] = rs-plugin/css/settings.css
+
+scripts[] = js/bootstrap.min.js
+scripts[] = js/script.js
+scripts[] = js/owl.carousel.js
+scripts[] = js/custom/custom.js
+scripts[] = js/custom/jscolor.js
+scripts[] = js/custom/vue.js
+
+regions[menu] = Menu
+regions[header_right] = Header Right
+regions[breadcrumbs] = Breadcrumbs
+regions[content] = Content
+regions[newsletter] = Newsletter
+regions[blog_sidebar] = Blog Sidebar
+regions[shop_sidebar] = Shop Sidebar
+regions[bottom_content] = Bottom Content
+regions[after_content] = After Content
+regions[footer] = Footer
